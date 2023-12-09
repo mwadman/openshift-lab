@@ -1,0 +1,9 @@
+##################
+# Packer Section #
+##################
+# Vagrant SSH Public Keys
+packer/vagrant/*.pub*
+# Ignition File Created By Butane
+packer/http/ignition.json
+# Output Boxes
+packer/output/*.box
