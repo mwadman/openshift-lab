@@ -14,3 +14,24 @@ packer/output/*.box
 ###########
 
 .vagrant/
+
+##########
+# Python #
+##########
+
+venv/
+
+###########
+# Ansible #
+###########
+
+roles/*
+!roles/mirror_registry/
+
+collections/
+
+#############
+# OpenShift #
+#############
+
+pull-secret.json

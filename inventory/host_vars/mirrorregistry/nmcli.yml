@@ -1,0 +1,8 @@
+---
+nmcli_connections:
+  - conn_name: "System eth1" # Add default route to Mirror Registry VM because libvirt only adds a default route on the management network
+    dns4:
+      - "172.16.0.1" # Points DNS out NAT interface but removes ability to resolve management.vagrant hostnames
+    dns4_ignore_auto: true
+    dns4_search: "nat.vagrant"
+    gw4: "172.16.0.1"

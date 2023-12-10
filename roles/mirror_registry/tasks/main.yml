@@ -1,0 +1,27 @@
+---
+- name: Install required packages
+  ansible.builtin.package:
+    name: "{{ item.name }}"
+  loop:
+    - name: "openssl"
+    - name: "parted"
+    - name: "podman"
+
+- name: Import Disk Tasks
+  ansible.builtin.import_tasks:
+    file: "disk.yml"
+
+- name: Add self to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: "/etc/hosts"
+    regexp: ".*{{ ansible_hostname }}.none.vagrant"
+    line: "{{ ansible_eth0.ipv4.address }}\t{{ ansible_hostname }}.none.vagrant"
+    backup: true
+
+- name: Import Registry Tasks
+  ansible.builtin.import_tasks:
+    file: "registry.yml"
+
+- name: Import Mirror Tasks
+  ansible.builtin.import_tasks:
+    file: "mirror.yml"

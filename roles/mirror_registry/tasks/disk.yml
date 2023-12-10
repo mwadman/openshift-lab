@@ -1,0 +1,19 @@
+---
+- name: Partition data disk
+  community.general.parted:
+    device: "/dev/vdb"
+    number: 1
+    fs_type: "xfs"
+    state: "present"
+
+- name: Create filesystem on data disk
+  community.general.filesystem:
+    dev: "/dev/vdb1"
+    fstype: "xfs"
+
+- name: Mount data disk
+  ansible.posix.mount:
+    src: "/dev/vdb1"
+    fstype: "xfs"
+    path: "/srv"
+    state: "mounted"

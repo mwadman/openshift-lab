@@ -1,0 +1,58 @@
+---
+- name: Create directories required for mirroring
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: '0700'
+  loop:
+    - path: "/root/.local/bin"
+    - path: "/root/.docker"
+
+- name: Download OpenShift CLI and Mirror Plugin
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/sha256sum.txt"
+    dest: "{{ item.dest }}"
+    mode: "644"
+  loop:
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux-4.14.4.tar.gz" # TODO: Versioned oc doesn't have a checksum
+      dest: "/root/openshift-client-linux.tar.gz"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/oc-mirror.tar.gz"
+      dest: "/root/oc-mirror.tar.gz"
+
+- name: Extract OpenShift CLI and Mirror Plugin
+  ansible.builtin.unarchive:
+    src: "{{ item.src }}"
+    remote_src: true
+    dest: "/root/.local/bin"
+    mode: "755"
+    owner: "root"
+    group: "root"
+    creates: "{{ item.creates }}"
+  loop:
+    - src: "/root/openshift-client-linux.tar.gz"
+      creates: "/root/.local/bin/oc"
+    - src: "/root/oc-mirror.tar.gz"
+      creates: "/root/.local/bin/oc-mirror"
+
+- name: Load Pull Secrets into variable
+  ansible.builtin.include_vars:
+    file: "../pull-secret.json"
+    name: pull_secrets
+
+- name: Append Mirror Registry credentials to Pull Secrets variable # noqa jinja[spacing]
+  ansible.builtin.set_fact:
+    pull_secrets: "{{ pull_secrets | combine(
+                        {'auths': {'mirrorregistry.none.vagrant: 8443': {
+                           'auth': 'aW5pdDpNaXJyb3JSZWdpc3RyeQ==',
+                           'email': 'init@mirrorregistry.none.vagrant'
+                        }}}
+                      ,recursive=true) }}"
+
+- name: Copy OpenShift Pull Secret File
+  ansible.builtin.copy:
+    content: "{{ pull_secrets | to_nice_json }}"
+    dest: "/root/.docker/config.json"
+    mode: '0600'
+    owner: "root"
+    group: "root"

@@ -1,0 +1,22 @@
+---
+- name: Download OpenShift Mirror Registry Tool
+  ansible.builtin.get_url:
+    url: "https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/latest/mirror-registry.tar.gz"
+    checksum: "sha256:https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/latest/mirror-registry.tar.gz.sha256"
+    dest: "/root/mirror-registry.tar.gz"
+    mode: "644"
+
+- name: Extract OpenShift Mirror Registry Tool
+  ansible.builtin.unarchive:
+    src: "/root/mirror-registry.tar.gz"
+    remote_src: true
+    dest: "/root/"
+    creates: "/root/mirror-registry"
+
+- name: Install Mirror Registry
+  ansible.builtin.command:
+    cmd: "/root/mirror-registry install
+          --initUser init --initPassword MirrorRegistry
+          --quayHostname mirrorregistry.none.vagrant --quayRoot /srv"
+  changed_when: true # TODO:
+  when: true

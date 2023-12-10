@@ -1,0 +1,12 @@
+---
+- name: Configure networks via nmcli
+  hosts: vagrant
+  become: true
+  roles:
+    - mwadman.nmcli
+
+- name: Set Up Mirror Registry
+  hosts: mirrorregistry
+  become: true
+  roles:
+    - mirror_registry
