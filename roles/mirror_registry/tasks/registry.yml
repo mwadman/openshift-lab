@@ -1,8 +1,10 @@
 ---
 - name: Download OpenShift Mirror Registry Tool
   ansible.builtin.get_url:
-    url: "https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/latest/mirror-registry.tar.gz"
-    checksum: "sha256:https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/latest/mirror-registry.tar.gz.sha256"
+    url: "https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/\
+          {{ mirror_registry_version }}/mirror-registry.tar.gz"
+    checksum: "sha256:https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/mirror-registry/\
+               {{ mirror_registry_version }}/mirror-registry.tar.gz.sha256"
     dest: "/root/mirror-registry.tar.gz"
     mode: "644"
 

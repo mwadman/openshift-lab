@@ -11,13 +11,13 @@
 - name: Download OpenShift CLI and Mirror Plugin
   ansible.builtin.get_url:
     url: "{{ item.url }}"
-    checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/sha256sum.txt"
+    checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/sha256sum.txt"
     dest: "{{ item.dest }}"
     mode: "644"
   loop:
-    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux-4.14.4.tar.gz" # TODO: Versioned oc doesn't have a checksum
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/openshift-client-linux-4.14.4.tar.gz"
       dest: "/root/openshift-client-linux.tar.gz"
-    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/oc-mirror.tar.gz"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/oc-mirror.tar.gz"
       dest: "/root/oc-mirror.tar.gz"
 
 - name: Extract OpenShift CLI and Mirror Plugin
