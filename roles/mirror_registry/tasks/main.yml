@@ -7,10 +7,6 @@
     - name: "parted"
     - name: "podman"
 
-- name: Import Disk Tasks
-  ansible.builtin.import_tasks:
-    file: "disk.yml"
-
 - name: Add self to /etc/hosts
   ansible.builtin.lineinfile:
     path: "/etc/hosts"

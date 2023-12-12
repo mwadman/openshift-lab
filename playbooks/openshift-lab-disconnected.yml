@@ -5,6 +5,29 @@
   roles:
     - mwadman.networkmanager_roles.nmcli
 
+- name: Resize filesystem to full disk size
+  hosts: vagrant
+  become: true
+  tasks:
+    - name: Install growpart utility
+      ansible.builtin.package:
+        name: "cloud-utils-growpart"
+        state: "present"
+      when: ansible_distribution == "Rocky" # No package manger on RHCOS
+    - name: Resize Partition
+      ansible.builtin.command:
+        cmd: "growpart {{ root_partition[:-1] }} {{ root_partition[-1:] }}"
+      register: growpart_command
+      changed_when: "'CHANGED' in growpart_command.stdout"
+      failed_when:
+        - "'NOCHANGE' not in growpart_command.stdout"
+        - "growpart_command.rc != 0"
+    - name: Resize filesystem # noqa: no-handler
+      ansible.builtin.command:
+        cmd: "xfs_growfs /"
+      when: growpart_command.changed
+      register: xfs_growfs_command
+      changed_when: "'data blocks changed' in xfs_growfs_command.stdout"
 
 - name: Set Up Mirror Registry
   hosts: mirrorregistry

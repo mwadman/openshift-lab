@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
 
   # https://docs.openshift.com/container-platform/4.14/installing/disconnected_install/installing-mirroring-creating-registry.html
   config.vm.define "mirrorregistry" do |device|
-    device.vm.box = "generic/rocky9"
+    device.vm.box = "rockylinux/9" # Doesn't use LVM so easier to resize
     device.vm.hostname = "mirrorregistry"
     device.vm.network :private_network,
       :type => "dhcp",
