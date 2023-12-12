@@ -3,7 +3,8 @@
   hosts: vagrant
   become: true
   roles:
-    - mwadman.nmcli
+    - mwadman.networkmanager_roles.nmcli
+
 
 - name: Set Up Mirror Registry
   hosts: mirrorregistry

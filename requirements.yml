@@ -8,6 +8,5 @@ collections:
     version: 8.1.0
   - name: ansible.posix
     version: 1.5.4
-  # TODO: Upload collection once https://forum.ansible.com/t/incorrect-namespaces-name-with-0/2781 fixed
-  # - name: mwadman.networkmanager_roles
-  #   version: 1.0.0
+  - name: mwadman.networkmanager_roles
+    version: 1.0.1

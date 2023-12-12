@@ -28,7 +28,7 @@ venv/
 roles/*
 !roles/mirror_registry/
 
-collections/
+ansible_collections/
 
 #############
 # OpenShift #
