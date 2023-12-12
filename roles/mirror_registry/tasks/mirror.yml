@@ -43,7 +43,7 @@
 - name: Append Mirror Registry credentials to Pull Secrets variable # noqa jinja[spacing]
   ansible.builtin.set_fact:
     pull_secrets: "{{ pull_secrets | combine(
-                        {'auths': {'mirrorregistry.none.vagrant: 8443': {
+                        {'auths': {'mirrorregistry.none.vagrant:8443': {
                            'auth': 'aW5pdDpNaXJyb3JSZWdpc3RyeQ==',
                            'email': 'init@mirrorregistry.none.vagrant'
                         }}}
