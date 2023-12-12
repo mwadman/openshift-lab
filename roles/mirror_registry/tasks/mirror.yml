@@ -56,3 +56,25 @@
     mode: '0600'
     owner: "root"
     group: "root"
+
+- name: Generate Imageset Configuration
+  ansible.builtin.template:
+    src: imageset-config.yaml.j2
+    dest: /root/imageset-config.yaml
+    mode: '0644'
+    owner: "root"
+    group: "root"
+
+- name: Ask user to confirm whether to mirror images
+  ansible.builtin.pause:
+    prompt: |
+      The next task (mirroring images) will take a very long time to run.
+      Please type 'y' to run or 'n' (or anything else) to skip.
+  register: mirror_prompt
+
+- name: Mirror images to local registry
+  ansible.builtin.command:
+    cmd: "oc mirror --config=/root/imageset-config.yaml --dest-skip-tls docker://mirrorregistry.none.vagrant:8443"
+    creates: "/root/oc-mirror-workspace/publish/.metadata.json"
+  changed_when: true
+  when: mirror_prompt.user_input == "y"

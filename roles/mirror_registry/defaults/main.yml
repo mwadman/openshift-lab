@@ -4,3 +4,12 @@ mirror_openshift_version: "4.14"
 mirror_registry_version: "1.3.9"
 mirror_client_version: "4.14.4"
 
+mirror_imageset_catalog_version: "v{{ mirror_openshift_version }}"
+mirror_imageset_channels:
+  - name: "stable-{{ mirror_openshift_version }}"
+    type: "ocp"
+mirror_imageset_operators: [] # Will retrieve all packages in catalog
+# mirror_imageset_operators:
+#   - name: "serverless-operator"
+#     channels:
+#       - "stable"

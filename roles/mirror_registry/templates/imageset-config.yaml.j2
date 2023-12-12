@@ -1,0 +1,30 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+storageConfig:
+  registry:
+    imageURL: mirrorregistry.none.vagrant:8443/mirror/oc-mirror-metadata
+    skipTLS: true
+mirror:
+  platform:
+    channels:
+{% for channel in mirror_imageset_channels %}
+      - name: {{ channel.name }}
+        type: {{ channel.type }}
+{% endfor %}
+  operators:
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:{{ mirror_imageset_catalog_version }}
+{% if mirror_imageset_operators %}
+      packages:
+{%   for operator in mirror_imageset_operators %}
+        - name: {{ operator.name }}
+{%     for channel in operator.channels %}
+          channels:
+            - name: {{ channel }}
+{%     endfor %}
+{%   endfor %}
+{% else %}
+      full: true
+{% endif %}
+  additionalImages:
+    - name: registry.redhat.io/ubi8/ubi:latest
+  helm: {}
