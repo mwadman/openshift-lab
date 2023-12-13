@@ -4,6 +4,7 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 
 # Prerequisites
 
+- A host machine with at least 18 vCPUs, 72GB RAM and 800GB Disk Space available.
 - [libvirt](https://wiki.archlinux.org/title/libvirt)
 - [vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
 - [Docker](https://docs.docker.com/engine/install/)

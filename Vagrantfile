@@ -75,24 +75,4 @@ Vagrant.configure("2") do |config|
   #     libvirt.machine_virtual_size = 100
   #   end
   # end
-  # config.vm.define "worker01" do |device|
-  #   device.vm.box = "packer_rhcos_qemu_libvirt_amd64"
-  #   device.vm.box_url = "file://./packer/output/packer_rhcos_qemu_libvirt_amd64.box"
-  #   device.vm.hostname = "worker01"
-  #   device.vm.provider "libvirt" do |libvirt|
-  #     libvirt.memory = 8192
-  #     libvirt.cpus = 2
-  #     libvirt.machine_virtual_size = 100
-  #   end
-  # end
-  # config.vm.define "worker02" do |device|
-  #   device.vm.box = "packer_rhcos_qemu_libvirt_amd64"
-  #   device.vm.box_url = "file://./packer/output/packer_rhcos_qemu_libvirt_amd64.box"
-  #   device.vm.hostname = "worker02"
-  #   device.vm.provider "libvirt" do |libvirt|
-  #     libvirt.memory = 8192
-  #     libvirt.cpus = 2
-  #     libvirt.machine_virtual_size = 100
-  #   end
-  # end
 end
