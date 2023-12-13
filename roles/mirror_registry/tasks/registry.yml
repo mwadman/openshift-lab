@@ -19,14 +19,18 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
-    mode: '0700'
+    mode: "{{ item.mode }}"
   loop:
     - path: "/srv/quayRoot"
+      mode: "0700"
     - path: "/srv/quayStorage"
+      mode: "0730"
 
 - name: Install Mirror Registry
   ansible.builtin.command:
     cmd: "/root/mirror-registry install
           --initUser init --initPassword MirrorRegistry
           --quayHostname mirrorregistry.none.vagrant --quayRoot /srv/quayRoot --quayStorage /srv/quayStorage"
-  changed_when: true
+    creates: "/etc/systemd/system/quay-pod.service"
+  register: "registry_install"
+  changed_when: registry_install.stdout != "skipped, since /etc/systemd/system/quay-pod.service exists"
