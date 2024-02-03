@@ -13,3 +13,5 @@ mirror_imageset_operators: [] # Will retrieve all packages in catalog
 #   - name: "serverless-operator"
 #     channels:
 #       - "stable"
+mirror_imageset_images:
+  - "registry.redhat.io/ubi9/ubi:latest"

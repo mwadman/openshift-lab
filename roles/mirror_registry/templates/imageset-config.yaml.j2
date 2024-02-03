@@ -25,6 +25,10 @@ mirror:
 {% else %}
       full: true
 {% endif %}
+{% if mirror_imageset_images %}
   additionalImages:
-    - name: registry.redhat.io/ubi8/ubi:latest
+{%   for image in mirror_imageset_images %}
+    - name: {{ image }}
+{%   endfor %}
+{% endif %}
   helm: {}
