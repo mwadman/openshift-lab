@@ -11,21 +11,29 @@ mirror:
       - name: {{ channel.name }}
         type: {{ channel.type }}
 {% endfor %}
-  operators:
-    - catalog: registry.redhat.io/redhat/redhat-operator-index:{{ mirror_imageset_catalog_version }}
-{% if mirror_imageset_operators %}
-      packages:
-{%   for operator in mirror_imageset_operators %}
-        - name: {{ operator.name }}
-{%     for channel in operator.channels %}
-          channels:
-            - name: {{ channel }}
-{%     endfor %}
-{%   endfor %}
+{% if not mirror_imageset_catalogs %}
+  operators: []
 {% else %}
+  operators:
+{%   for catalog in mirror_imageset_catalogs %}
+    - catalog: {{ catalog.name }}
+{%     if catalog.operators %}
+      packages:
+{%       for operator in catalog.operators %}
+        - name: {{ operator.name }}
+          channels:
+{%         for channel in operator.channels %}
+            - name: {{ channel }}
+{%         endfor %}
+{%       endfor %}
+{%     else %}
       full: true
+{%     endif %}
+{%   endfor %}
 {% endif %}
-{% if mirror_imageset_images %}
+{% if not mirror_imageset_images %}
+  additionalImages: []
+{% else %}
   additionalImages:
 {%   for image in mirror_imageset_images %}
     - name: {{ image }}
