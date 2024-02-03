@@ -21,10 +21,11 @@
       ansible.builtin.package:
         name: "cloud-utils-growpart"
         state: "present"
-      when: ansible_distribution == "Rocky" # No package manger on RHCOS
     - name: Resize Partition
       ansible.builtin.command:
-        cmd: "growpart {{ root_partition[:-1] }} {{ root_partition[-1:] }}"
+        cmd: "growpart
+              {{ (ansible_mounts | selectattr('mount', 'eq', '/') | map(attribute='device') | first)[:-1] }}
+              {{ (ansible_mounts | selectattr('mount', 'eq', '/') | map(attribute='device') | first)[-1:] }}" # e.g. "growpart /dev/vda 5"
       register: growpart_command
       changed_when: "'CHANGED' in growpart_command.stdout"
       failed_when:
