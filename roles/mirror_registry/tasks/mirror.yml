@@ -15,7 +15,7 @@
     dest: "{{ item.dest }}"
     mode: "644"
   loop:
-    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/openshift-client-linux-4.14.4.tar.gz"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/openshift-client-linux-{{ mirror_client_version }}.tar.gz"
       dest: "/root/openshift-client-linux.tar.gz"
     - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ mirror_client_version }}/oc-mirror.tar.gz"
       dest: "/root/oc-mirror.tar.gz"
