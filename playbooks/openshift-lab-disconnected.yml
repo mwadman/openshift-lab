@@ -1,12 +1,20 @@
 ---
 - name: Configure networks via nmcli
-  hosts: vagrant
+  hosts: mirrorregistry
   become: true
   roles:
     - mwadman.networkmanager_roles.nmcli
 
+- name: Re-run gather_facts after network interface update
+  hosts: mirrorregistry
+  become: true
+  tasks:
+    - name: Re-run gather_facts
+      ansible.builtin.gather_facts:
+        parallel: true
+
 - name: Resize filesystem to full disk size
-  hosts: vagrant
+  hosts: mirrorregistry
   become: true
   tasks:
     - name: Install growpart utility

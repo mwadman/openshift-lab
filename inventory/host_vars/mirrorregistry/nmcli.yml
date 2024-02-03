@@ -6,3 +6,6 @@ nmcli_connections:
     dns4_ignore_auto: true
     dns4_search: "nat.vagrant"
     gw4: "172.16.0.1"
+  - conn_name: "System eth2" # Add default route to Mirror Registry VM because libvirt only adds a default route on the management network
+    dns4_search: "openshift.vagrant"
+    ip4: 10.0.0.2/24

@@ -23,16 +23,6 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 
 Download your [OpenShift pull secret](https://console.redhat.com/openshift/install/pull-secret) and create the file pull-secret.json at the root of this repository.
 
-## Packer Box Creation
-
-Because I don't feel comfortable uploading a Red Hat CoreOS image [for everyone to download](https://app.vagrantup.com/boxes/search), you will first need to build an image yourself.  
-To do so, change into the `packer` directory and run `build.sh`:
-
-```bash
-cd packer
-./build.sh
-```
-
 ## Vagrant Environment Creation
 
 ```bash
