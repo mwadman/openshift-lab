@@ -16,6 +16,12 @@
 - name: Resize filesystem to full disk size
   hosts: mirrorregistry
   become: true
+  handlers:
+    - name: Resize filesystem
+      ansible.builtin.command:
+        cmd: "xfs_growfs /"
+      register: xfs_growfs_command
+      changed_when: "'data blocks changed' in xfs_growfs_command.stdout"
   tasks:
     - name: Install growpart utility
       ansible.builtin.package:
@@ -31,12 +37,7 @@
       failed_when:
         - "'NOCHANGE' not in growpart_command.stdout"
         - "growpart_command.rc != 0"
-    - name: Resize filesystem # noqa: no-handler
-      ansible.builtin.command:
-        cmd: "xfs_growfs /"
-      when: growpart_command.changed
-      register: xfs_growfs_command
-      changed_when: "'data blocks changed' in xfs_growfs_command.stdout"
+      notify: "Resize filesystem"
 
 - name: Set Up Mirror Registry
   hosts: mirrorregistry
