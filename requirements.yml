@@ -10,3 +10,6 @@ collections:
     version: 1.5.4
   - name: mwadman.networkmanager_roles
     version: 1.0.1
+  - name: mwadman.dnsmasq_roles
+    version: 1.0.0
+

@@ -44,3 +44,4 @@
   become: true
   roles:
     - mirror_registry
+    - mwadman.dnsmasq_roles.dnsmasq

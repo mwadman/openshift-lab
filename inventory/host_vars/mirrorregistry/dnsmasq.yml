@@ -1,0 +1,31 @@
+---
+dnsmasq_dns_domain_needed: true
+dnsmasq_dns_bogus_priv: true
+dnsmasq_dns_filterwin2k: true
+dnsmasq_dns_local_domains:
+  - "vagrant"
+dnsmasq_dns_addresses: # Points at eth2 to be load balanced by haproxy
+  - "/api.openshift.vagrant/{{ ansible_eth2.ipv4.address }}"
+  - "/api-int.openshift.vagrant/{{ ansible_eth2.ipv4.address }}"
+  - "/apps.openshift.vagrant/{{ ansible_eth2.ipv4.address }}" # *.apps - dnsmasq support explicitly defining a wildcard
+dnsmasq_system_interfaces:
+  - lo
+  - eth2
+dnsmasq_system_domains:
+  - "mgmt.vagrant,192.168.121.0/24"
+  - "nat.vagrant,172.16.0.0/24"
+  - "openshift.vagrant,10.0.0.0/24"
+dnsmasq_dhcp_ranges:
+  - "10.0.0.0,static"
+dnsmasq_dhcp_hosts:
+  - "52:54:00:00:00:11,bootstrap,10.0.0.11"
+  - "52:54:00:00:00:21,master01,10.0.0.21"
+  - "52:54:00:00:00:22,master02,10.0.0.22"
+  - "52:54:00:00:00:23,master03,10.0.0.23"
+  - "52:54:00:00:00:31,worker01,10.0.0.31"
+  - "52:54:00:00:00:32,worker02,10.0.0.32"
+dnsmasq_dhcp_ignores:
+  - "tag:!known"
+dnsmasq_dhcp_options:
+  - 3
+

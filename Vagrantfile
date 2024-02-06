@@ -31,6 +31,7 @@ Vagrant.configure("2") do |config|
     device.vm.network :private_network,
       :libvirt__forward_mode => "none",
       :libvirt__dhcp_enabled => false,
+      :libvirt__host_ip => "10.0.0.1",
       :libvirt__network_name => 'vagrant-openshift',
       :libvirt__network_address => "10.0.0.0",
       :libvirt__netmask => "255.255.255.0",
@@ -50,6 +51,7 @@ Vagrant.configure("2") do |config|
     device.vm.network :private_network,
       :libvirt__forward_mode => "none",
       :libvirt__dhcp_enabled => false,
+      :libvirt__host_ip => "10.0.0.1",
       :libvirt__network_name => 'vagrant-openshift',
       :libvirt__network_address => "10.0.0.0",
       :libvirt__netmask => "255.255.255.0",
@@ -65,11 +67,12 @@ Vagrant.configure("2") do |config|
     end
   end
   (1..3).each do |node_num|
-    config.vm.define "control0#{node_num}", autostart: false do |device|
-      device.vm.hostname = "control0#{node_num}"
+    config.vm.define "master0#{node_num}", autostart: false do |device|
+      device.vm.hostname = "master0#{node_num}"
       device.vm.network :private_network,
         :libvirt__forward_mode => "none",
         :libvirt__dhcp_enabled => false,
+        :libvirt__host_ip => "10.0.0.1",
         :libvirt__network_name => 'vagrant-openshift',
         :libvirt__network_address => "10.0.0.0",
         :libvirt__netmask => "255.255.255.0",
@@ -87,10 +90,11 @@ Vagrant.configure("2") do |config|
   end
   (1..2).each do |node_num|
     config.vm.define "worker0#{node_num}", autostart: false do |device|
-      device.vm.hostname = "control0#{node_num}"
+      device.vm.hostname = "worker0#{node_num}"
       device.vm.network :private_network,
         :libvirt__forward_mode => "none",
         :libvirt__dhcp_enabled => false,
+        :libvirt__host_ip => "10.0.0.1",
         :libvirt__network_name => 'vagrant-openshift',
         :libvirt__network_address => "10.0.0.0",
         :libvirt__netmask => "255.255.255.0",
