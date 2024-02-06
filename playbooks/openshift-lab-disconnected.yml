@@ -45,3 +45,4 @@
   roles:
     - mirror_registry
     - mwadman.dnsmasq_roles.dnsmasq
+    - uoi-io.haproxy

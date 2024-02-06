@@ -13,3 +13,6 @@ collections:
   - name: mwadman.dnsmasq_roles
     version: 1.0.0
 
+roles:
+  - name: uoi-io.haproxy
+    version: v1.5.7
