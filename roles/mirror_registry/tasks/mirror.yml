@@ -42,7 +42,7 @@
 
 - name: Append Mirror Registry credentials to Pull Secrets variable # noqa jinja[spacing]
   ansible.builtin.set_fact:
-    pull_secrets: "{{ pull_secrets | combine({'auths':{'mirrorregistry.none.vagrant:8443':{'auth':'aW5pdDpNaXJyb3JSZWdpc3RyeQ=='}}},recursive=true) }}"
+    pull_secrets: "{{ pull_secrets | combine({'auths':{'mirrorregistry.openshift.vagrant:8443':{'auth':'aW5pdDpNaXJyb3JSZWdpc3RyeQ=='}}},recursive=true) }}"
 
 - name: Copy OpenShift Pull Secret File
   ansible.builtin.copy:
@@ -69,7 +69,7 @@
 
 - name: Mirror images to local registry
   ansible.builtin.command:
-    cmd: "oc mirror --config=/root/imageset-config.yaml --dest-skip-tls docker://mirrorregistry.none.vagrant:8443"
+    cmd: "oc mirror --config=/root/imageset-config.yaml --dest-skip-tls docker://mirrorregistry.openshift.vagrant:8443"
     creates: "/root/oc-mirror-workspace/publish/.metadata.json"
   changed_when: true
   when: mirror_prompt.user_input == "y"

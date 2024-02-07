@@ -8,6 +8,7 @@ dnsmasq_dns_addresses: # Points at eth2 to be load balanced by haproxy
   - "/api.openshift.vagrant/{{ ansible_eth2.ipv4.address }}"
   - "/api-int.openshift.vagrant/{{ ansible_eth2.ipv4.address }}"
   - "/apps.openshift.vagrant/{{ ansible_eth2.ipv4.address }}" # *.apps - dnsmasq support explicitly defining a wildcard
+  - "/mirrorregistry.openshift.vagrant/{{ ansible_eth2.ipv4.address }}"
 dnsmasq_system_interfaces:
   - lo
   - eth2

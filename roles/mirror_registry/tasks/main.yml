@@ -10,8 +10,8 @@
 - name: Add self to /etc/hosts
   ansible.builtin.lineinfile:
     path: "/etc/hosts"
-    regexp: ".*{{ ansible_hostname }}.none.vagrant"
-    line: "{{ ansible_eth2.ipv4.address }}\t{{ ansible_hostname }}.none.vagrant"
+    regexp: ".*{{ ansible_hostname }}.openshift.vagrant"
+    line: "{{ ansible_eth2.ipv4.address }}\t{{ ansible_hostname }}.openshift.vagrant"
     backup: true
 
 - name: Import Registry Tasks

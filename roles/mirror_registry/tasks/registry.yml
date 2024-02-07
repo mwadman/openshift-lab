@@ -30,7 +30,7 @@
   ansible.builtin.command:
     cmd: "/root/mirror-registry install
           --initUser init --initPassword MirrorRegistry
-          --quayHostname mirrorregistry.none.vagrant --quayRoot /srv/quayRoot --quayStorage /srv/quayStorage"
+          --quayHostname mirrorregistry.openshift.vagrant --quayRoot /srv/quayRoot --quayStorage /srv/quayStorage"
     creates: "/etc/systemd/system/quay-pod.service"
   register: "registry_install"
   changed_when: registry_install.stdout != "skipped, since /etc/systemd/system/quay-pod.service exists"
