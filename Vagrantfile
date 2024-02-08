@@ -65,6 +65,9 @@ Vagrant.configure("2") do |config|
       libvirt.boot 'network'
       libvirt.storage :file, :size => '100G'
     end
+    device.ssh.username = "core"
+    device.ssh.password = "vagrant"
+    device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
   end
   (1..3).each do |node_num|
     config.vm.define "master0#{node_num}", autostart: false do |device|
@@ -86,6 +89,9 @@ Vagrant.configure("2") do |config|
         libvirt.boot 'network'
         libvirt.storage :file, :size => '100G'
       end
+      device.ssh.username = "core"
+      device.ssh.password = "vagrant"
+      device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
     end
   end
   (1..2).each do |node_num|
@@ -108,6 +114,9 @@ Vagrant.configure("2") do |config|
         libvirt.boot 'network'
         libvirt.storage :file, :size => '100G'
       end
+      device.ssh.username = "core"
+      device.ssh.password = "vagrant"
+      device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
     end
   end
 end

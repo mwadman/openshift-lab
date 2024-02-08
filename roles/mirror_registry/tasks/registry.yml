@@ -34,3 +34,9 @@
     creates: "/etc/systemd/system/quay-pod.service"
   register: "registry_install"
   changed_when: registry_install.stdout != "skipped, since /etc/systemd/system/quay-pod.service exists"
+
+- name: Fetch registry CA certificate
+  ansible.builtin.fetch:
+    src: "/srv/quayRoot/quay-rootCA/rootCA.pem"
+    dest: "../openshift/mirror/rootCA.pem"
+    flat: true

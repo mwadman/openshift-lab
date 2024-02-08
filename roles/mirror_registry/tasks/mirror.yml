@@ -37,7 +37,7 @@
 
 - name: Load Pull Secrets into variable
   ansible.builtin.include_vars:
-    file: "../pull-secret.json"
+    file: "../openshift/pull-secret.json"
     name: pull_secrets
 
 - name: Append Mirror Registry credentials to Pull Secrets variable # noqa jinja[spacing]
@@ -72,4 +72,21 @@
     cmd: "oc mirror --config=/root/imageset-config.yaml --dest-skip-tls docker://mirrorregistry.openshift.vagrant:8443"
     creates: "/root/oc-mirror-workspace/publish/.metadata.json"
   changed_when: true
+  when: mirror_prompt.user_input == "y"
+
+- name: Find results directory
+  ansible.builtin.find:
+    paths: "/root/oc-mirror-workspace"
+    patterns:
+      - "results-*"
+    file_type: "directory"
+    recurse: false
+  register: find_results_directory
+  when: mirror_prompt.user_input == "y"
+
+- name: Fetch mirror results
+  ansible.builtin.fetch:
+    src: "{{ find_results_directory.files[0].path }}/imageContentSourcePolicy.yaml"
+    dest: "../openshift/mirror/imageContentSourcePolicy.yaml"
+    flat: true
   when: mirror_prompt.user_input == "y"

@@ -1,0 +1,80 @@
+---
+- name: Create local directories for Openshift installation
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - path: "../openshift/tools"
+    - path: "../openshift/install"
+
+- name: Download Openshift Install Tools
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    checksum: "{{ item.checksum }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ install_client_version }}/openshift-install-linux-{{ install_client_version }}.tar.gz"
+      dest: "../openshift/tools/openshift-install-linux.tar.gz"
+      checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ install_client_version }}/sha256sum.txt"
+      mode: "644"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/butane"
+      dest: "../openshift/tools/butane"
+      checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/sha256sum.txt"
+      mode: "755"
+
+- name: Extract Openshift Install Tools
+  ansible.builtin.unarchive:
+    src: "../openshift/tools/openshift-install-linux.tar.gz"
+    dest: "../openshift/tools/"
+    creates: "../openshift/tools/openshift-install"
+
+- name: Determine if .openshift_install.log exists
+  ansible.builtin.find:
+    paths: "../openshift/install"
+    patterns:
+      - ".openshift_install.log"
+    file_type: "file"
+    hidden: true
+    recurse: false
+  register: find_install_log
+
+- name: Create OpenShift Install Configuration file
+  ansible.builtin.template:
+    src: install-config.yaml.j2
+    dest: "../openshift/install/install-config.yaml"
+    mode: '0644'
+  when: find_install_log.files | length == 0
+
+- name: Generate Kubernetes manifests
+  ansible.builtin.command:
+    cmd: "{{ item.cmd }}"
+    creates: "{{ item.creates | default(omit) }}"
+    removes: "{{ item.removes | default(omit) }}"
+  loop:
+    - cmd: "../openshift/tools/openshift-install create manifests --dir ../openshift/install/"
+      removes: "../openshift/install/install-config.yaml"
+    - cmd: "../openshift/tools/butane ../openshift/configs/99-master-chrony.bu -o ../openshift/install/openshift/99-master-chrony.yaml"
+      creates: "../openshift/install/openshift/99-master-chrony.yaml"
+    - cmd: "../openshift/tools/butane ../openshift/configs/99-worker-chrony.bu -o ../openshift/install/openshift/99-worker-chrony.yaml"
+      creates: "../openshift/install/openshift/99-worker-chrony.yaml"
+    - cmd: "../openshift/tools/butane ../openshift/configs/99-master-core-passwd.bu -o ../openshift/install/openshift/99-master-core-passwd.yaml"
+      creates: "../openshift/install/openshift/99-master-core-passwd.yaml"
+    - cmd: "../openshift/tools/butane ../openshift/configs/99-worker-core-passwd.bu -o ../openshift/install/openshift/99-worker-core-passwd.yaml"
+      creates: "../openshift/install/openshift/99-worker-core-passwd.yaml"
+  when: find_install_log.files | length == 0
+
+- name: Configure scheduling on master nodes
+  ansible.builtin.lineinfile:
+    path: "../openshift/install/manifests/cluster-scheduler-02-config.yml"
+    regexp: ".*mastersSchedulable.*"
+    line: "  mastersSchedulable: {{ install_control_schedulable | bool | lower }}"
+  when: find_install_log.files | length == 0
+
+- name: Generate Ignition configuration files
+  ansible.builtin.command:
+    cmd: "../openshift/tools/openshift-install create ignition-configs --dir ../openshift/install/"
+    creates: "./openshift/install/metadata.json"
+    removes: "../openshift/install/openshift/openshift-install-manifests.yaml"
+  when: find_install_log.files | length == 0

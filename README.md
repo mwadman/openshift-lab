@@ -21,7 +21,7 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 
 ## Create Pull Secret JSON
 
-Download your [OpenShift pull secret](https://console.redhat.com/openshift/install/pull-secret) and create the file pull-secret.json at the root of this repository.
+Download your [OpenShift pull secret](https://console.redhat.com/openshift/install/pull-secret) and create the file pull-secret.json in the openshift directory of this repository (./openshift/pull-secret.json)
 
 ## Vagrant Environment Creation
 

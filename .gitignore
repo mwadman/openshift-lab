@@ -16,6 +16,7 @@ venv/
 
 roles/*
 !roles/mirror_registry/
+!roles/openshift_config/
 
 ansible_collections/
 
@@ -23,4 +24,8 @@ ansible_collections/
 # OpenShift #
 #############
 
-pull-secret.json
+openshift/pull-secret.json
+openshift/mirror/rootCA.pem
+openshift/mirror/imageContentSourcePolicy.yaml
+openshift/tools/*
+openshift/install/*

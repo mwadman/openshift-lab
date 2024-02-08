@@ -1,0 +1,10 @@
+variant: openshift
+version: 4.14.0
+metadata:
+  name: 99-worker-core-passwd
+  labels:
+    machineconfiguration.openshift.io/role: worker
+passwd:
+  users:
+    - name: "core"
+      password_hash: "JDYkcFJZdUYwZ2ZGOWYvbzcyMSR0dEVRc2tOZjVDRFVjNHF4ZW9QZWR1azRSZEZDRGc3YjlJN25hSmlTcFdlVUMudVlwNG9wQUQvMnBTMjNMWXZhWVg2L0xkM2RuS2ttUzB5bEZFRmduMAo="

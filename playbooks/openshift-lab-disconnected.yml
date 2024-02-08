@@ -46,3 +46,9 @@
     - mirror_registry
     - mwadman.dnsmasq_roles.dnsmasq
     - uoi-io.haproxy
+
+- name: Create OpenShift configurations
+  hosts: localhost
+  become: false
+  roles:
+    - openshift_config
