@@ -46,6 +46,8 @@
     - mirror_registry
     - mwadman.dnsmasq_roles.dnsmasq
     - uoi-io.haproxy
+    - nginxinc.nginx
+    - nginxinc.nginx_config
 
 - name: Create OpenShift configurations
   hosts: localhost

@@ -1,3 +1,5 @@
 ---
 exclude_paths:
   - "./roles/uoi-io.haproxy/"
+  - "./roles/nginxinc.nginx/"
+  - "./roles/nginxinc.nginx_config/"

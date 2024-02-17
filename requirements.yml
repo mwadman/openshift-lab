@@ -16,3 +16,7 @@ collections:
 roles:
   - name: uoi-io.haproxy
     version: v1.5.7
+  - name: nginxinc.nginx
+    version: 0.24.1
+  - name: nginxinc.nginx_config
+    version: 0.7.0
