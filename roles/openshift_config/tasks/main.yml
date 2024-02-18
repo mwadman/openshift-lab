@@ -20,6 +20,10 @@
       dest: "../openshift/tools/openshift-install-linux.tar.gz"
       checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ install_client_version }}/sha256sum.txt"
       mode: "644"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ install_client_version }}/openshift-client-linux-{{ install_client_version }}.tar.gz"
+      dest: "../openshift/tools/openshift-client-linux.tar.gz"
+      checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ install_client_version }}/sha256sum.txt"
+      mode: "644"
     - url: "https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/butane"
       dest: "../openshift/tools/butane"
       checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/sha256sum.txt"
@@ -31,9 +35,14 @@
 
 - name: Extract Openshift Install Tools
   ansible.builtin.unarchive:
-    src: "../openshift/tools/openshift-install-linux.tar.gz"
+    src: "{{ item.src }}"
     dest: "../openshift/tools/"
-    creates: "../openshift/tools/openshift-install"
+    creates: "{{ item.creates }}"
+  loop:
+    - src: "../openshift/tools/openshift-install-linux.tar.gz"
+      creates: "../openshift/tools/openshift-install"
+    - src: "../openshift/tools/openshift-client-linux.tar.gz"
+      creates: "../openshift/tools/oc"
 
 - name: Import Configuration Generation Tasks
   ansible.builtin.import_tasks:
