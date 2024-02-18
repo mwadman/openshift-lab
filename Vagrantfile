@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
       :libvirt__network_address => "10.0.0.0",
       :libvirt__netmask => "255.255.255.0",
       :libvirt__domain_name => "openshift.vagrant",
-      :libvirt__adapter => 1,
+      :libvirt__adapter => 0,
       :libvirt__mac => "52:54:00:00:00:11" # 10.0.0.11
     device.vm.provider "libvirt" do |libvirt|
       libvirt.memory = 16384
@@ -65,6 +65,7 @@ Vagrant.configure("2") do |config|
       libvirt.boot 'cdrom'
       libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/bootstrap.iso'
       libvirt.storage :file, :size => '100G'
+      libvirt.mgmt_attach = false
     end
     device.ssh.username = "core"
     device.ssh.password = "vagrant"
@@ -81,7 +82,7 @@ Vagrant.configure("2") do |config|
         :libvirt__network_address => "10.0.0.0",
         :libvirt__netmask => "255.255.255.0",
         :libvirt__domain_name => "openshift.vagrant",
-        :libvirt__adapter => 1,
+        :libvirt__adapter => 0,
         :libvirt__mac => "52:54:00:00:00:2#{node_num}" # 10.0.0.2X
       device.vm.provider "libvirt" do |libvirt|
         libvirt.memory = 16384
@@ -90,6 +91,7 @@ Vagrant.configure("2") do |config|
         libvirt.boot 'cdrom'
         libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/master.iso'
         libvirt.storage :file, :size => '100G'
+        libvirt.mgmt_attach = false
       end
       device.ssh.username = "core"
       device.ssh.password = "vagrant"
@@ -107,7 +109,7 @@ Vagrant.configure("2") do |config|
         :libvirt__network_address => "10.0.0.0",
         :libvirt__netmask => "255.255.255.0",
         :libvirt__domain_name => "openshift.vagrant",
-        :libvirt__adapter => 1,
+        :libvirt__adapter => 0,
         :libvirt__mac => "52:54:00:00:00:3#{node_num}" # 10.0.0.3X
       device.vm.provider "libvirt" do |libvirt|
         libvirt.memory = 8192
@@ -116,6 +118,7 @@ Vagrant.configure("2") do |config|
         libvirt.boot 'cdrom'
         libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/worker.iso'
         libvirt.storage :file, :size => '100G'
+        libvirt.mgmt_attach = false
       end
       device.ssh.username = "core"
       device.ssh.password = "vagrant"
