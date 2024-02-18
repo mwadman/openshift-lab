@@ -62,7 +62,8 @@ Vagrant.configure("2") do |config|
       libvirt.memory = 16384
       libvirt.cpus = 4
       libvirt.boot 'hd'
-      libvirt.boot 'network'
+      libvirt.boot 'cdrom'
+      libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/bootstrap.iso'
       libvirt.storage :file, :size => '100G'
     end
     device.ssh.username = "core"
@@ -86,7 +87,8 @@ Vagrant.configure("2") do |config|
         libvirt.memory = 16384
         libvirt.cpus = 4
         libvirt.boot 'hd'
-        libvirt.boot 'network'
+        libvirt.boot 'cdrom'
+        libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/master.iso'
         libvirt.storage :file, :size => '100G'
       end
       device.ssh.username = "core"
@@ -111,7 +113,8 @@ Vagrant.configure("2") do |config|
         libvirt.memory = 8192
         libvirt.cpus = 2
         libvirt.boot 'hd'
-        libvirt.boot 'network'
+        libvirt.boot 'cdrom'
+        libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/worker.iso'
         libvirt.storage :file, :size => '100G'
       end
       device.ssh.username = "core"

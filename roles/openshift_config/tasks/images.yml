@@ -1,0 +1,29 @@
+---
+- name: Generate Image Download URL File # noqa command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: >
+      set -o pipefail &&
+      ../openshift/tools/openshift-install coreos print-stream-json
+      | grep -Eo 'https.*\.iso?'
+      | grep 'x86_64'
+      > ../openshift/images/iso_url.txt
+    executable: "/bin/bash"
+    creates: "../openshift/images/iso_url.txt"
+
+- name: Download Openshift Image
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "../openshift/images/rhcos.iso"
+    mode: "644"
+  loop: "{{ lookup('ansible.builtin.file', '../openshift/images/iso_url.txt') | split('\n') }}"
+
+- name: Customise node specific ISOs
+  ansible.builtin.command:
+    cmd: >
+      ../openshift/tools/coreos-installer iso customize
+      ../openshift/images/rhcos.iso
+      --dest-ignition ../openshift/install/{{ item }}.ign
+      --dest-device /dev/vda
+      --output ../openshift/images/{{ item }}.iso
+    creates: "../openshift/images/{{ item }}.iso"
+  loop: ["bootstrap", "master", "worker"]

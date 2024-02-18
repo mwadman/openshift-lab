@@ -23,7 +23,9 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 
 Download your [OpenShift pull secret](https://console.redhat.com/openshift/install/pull-secret) and create the file pull-secret.json in the openshift directory of this repository (./openshift/pull-secret.json)
 
-## Vagrant Environment Creation
+## Mirror Registry VM Creation
+
+The below will create the Mirror Registry VM, which is required for Ansible preparation.
 
 ```bash
 vagrant up
@@ -38,3 +40,12 @@ pip3 install -r requirements.txt
 ansible-galaxy install -r requirements.yml
 ansible-playbook playbooks/openshift-lab-disconnected.yml -D
 ```
+
+## OpenShift VM Creation
+
+After Ansible has run (and updated the path to the ISO )
+
+```bash
+vagrant up bootstrap master01 master02 master03 worker01 worker02
+```
+

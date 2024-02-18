@@ -2,11 +2,12 @@
 - name: Create local directories for Openshift installation
   ansible.builtin.file:
     path: "{{ item.path }}"
-    state: directory
-    mode: '0755'
+    state: "directory"
+    mode: "0755"
   loop:
     - path: "../openshift/tools"
     - path: "../openshift/install"
+    - path: "../openshift/images"
 
 - name: Download Openshift Install Tools
   ansible.builtin.get_url:
@@ -23,6 +24,10 @@
       dest: "../openshift/tools/butane"
       checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/sha256sum.txt"
       mode: "755"
+    - url: "https://mirror.openshift.com/pub/openshift-v4/clients/coreos-installer/latest/coreos-installer"
+      dest: "../openshift/tools/coreos-installer"
+      checksum: "sha256:https://mirror.openshift.com/pub/openshift-v4/clients/coreos-installer/latest/sha256sum.txt"
+      mode: "755"
 
 - name: Extract Openshift Install Tools
   ansible.builtin.unarchive:
@@ -33,3 +38,7 @@
 - name: Import Configuration Generation Tasks
   ansible.builtin.import_tasks:
     file: "generate.yml"
+
+- name: Import Image Download Tasks
+  ansible.builtin.import_tasks:
+    file: "images.yml"
