@@ -41,13 +41,15 @@ haproxy_listen:
       mode: "tcp"
       balance: "source"
       servers:
-        - "worker01 10.0.0.31:443 check inter 1s"
-        - "worker02 10.0.0.32:443 check inter 1s"
+        - "master01 10.0.0.21:443 check inter 1s"
+        - "master02 10.0.0.22:443 check inter 1s"
+        - "master03 10.0.0.23:443 check inter 1s"
   - ingress-router-80:
       binds:
         - "*:80"
       mode: "tcp"
       balance: "source"
       servers:
-        - "worker01 10.0.0.31:80 check inter 1s"
-        - "worker02 10.0.0.32:80 check inter 1s"
+        - "master01 10.0.0.21:80 check inter 1s"
+        - "master02 10.0.0.22:80 check inter 1s"
+        - "master03 10.0.0.23:80 check inter 1s"

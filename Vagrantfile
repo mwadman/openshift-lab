@@ -98,31 +98,31 @@ Vagrant.configure("2") do |config|
       device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
     end
   end
-  (1..2).each do |node_num|
-    config.vm.define "worker0#{node_num}", autostart: false do |device|
-      device.vm.hostname = "worker0#{node_num}"
-      device.vm.network :private_network,
-        :libvirt__forward_mode => "none",
-        :libvirt__dhcp_enabled => false,
-        :libvirt__host_ip => "10.0.0.1",
-        :libvirt__network_name => 'vagrant-openshift',
-        :libvirt__network_address => "10.0.0.0",
-        :libvirt__netmask => "255.255.255.0",
-        :libvirt__domain_name => "openshift.vagrant",
-        :libvirt__adapter => 0,
-        :libvirt__mac => "52:54:00:00:00:3#{node_num}" # 10.0.0.3X
-      device.vm.provider "libvirt" do |libvirt|
-        libvirt.memory = 8192
-        libvirt.cpus = 2
-        libvirt.boot 'hd'
-        libvirt.boot 'cdrom'
-        libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/worker.iso'
-        libvirt.storage :file, :size => '100G'
-        libvirt.mgmt_attach = false
-      end
-      device.ssh.username = "core"
-      device.ssh.password = "vagrant"
-      device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
-    end
-  end
+  # (1..2).each do |node_num|
+  #   config.vm.define "worker0#{node_num}", autostart: false do |device|
+  #     device.vm.hostname = "worker0#{node_num}"
+  #     device.vm.network :private_network,
+  #       :libvirt__forward_mode => "none",
+  #       :libvirt__dhcp_enabled => false,
+  #       :libvirt__host_ip => "10.0.0.1",
+  #       :libvirt__network_name => 'vagrant-openshift',
+  #       :libvirt__network_address => "10.0.0.0",
+  #       :libvirt__netmask => "255.255.255.0",
+  #       :libvirt__domain_name => "openshift.vagrant",
+  #       :libvirt__adapter => 0,
+  #       :libvirt__mac => "52:54:00:00:00:3#{node_num}" # 10.0.0.3X
+  #     device.vm.provider "libvirt" do |libvirt|
+  #       libvirt.memory = 8192
+  #       libvirt.cpus = 2
+  #       libvirt.boot 'hd'
+  #       libvirt.boot 'cdrom'
+  #       libvirt.storage :file, :device => :cdrom, :path => File.dirname(__FILE__) + '/openshift/images/worker.iso'
+  #       libvirt.storage :file, :size => '100G'
+  #       libvirt.mgmt_attach = false
+  #     end
+  #     device.ssh.username = "core"
+  #     device.ssh.password = "vagrant"
+  #     device.ssh.insert_key = false # https://access.redhat.com/solutions/6984064
+  #   end
+  # end
 end
