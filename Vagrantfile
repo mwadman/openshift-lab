@@ -39,8 +39,8 @@ Vagrant.configure("2") do |config|
       :libvirt__adapter => 2, # eth2
       :libvirt__mac => "52:54:00:00:00:02" # 10.0.0.2
     device.vm.provider "libvirt" do |libvirt|
-      libvirt.memory = 8192
-      libvirt.cpus = 2
+      libvirt.memory = 16384 # Can run on 8GB if needed, it's just very slow during install of a cluster
+      libvirt.cpus = 4 # Can run on 2 if needed, it's just very slow during install of a cluster
       libvirt.machine_virtual_size = 100
     end
   end
