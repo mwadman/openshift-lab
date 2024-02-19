@@ -5,6 +5,7 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 # Prerequisites
 
 - A host machine with at least 20 vCPUs, 80GB RAM and 800GB Disk Space available.  
+  You can reduce this to 16 vCPUs, 64GB RAM and 600GB Disk Space available by removing the worker nodes, which is documented below.
 - [libvirt](https://wiki.archlinux.org/title/libvirt)
 - [vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
 - [Docker](https://docs.docker.com/engine/install/)
@@ -22,6 +23,14 @@ Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using lib
 
 Download your [OpenShift pull secret](https://console.redhat.com/openshift/install/pull-secret) and create the file pull-secret.json in the openshift directory of this repository (./openshift/pull-secret.json)
 
+## Configure Worker Node Count
+
+By default, this repository will deploy worker nodes alongside the master nodes.  
+If preferred (or needed due to resource restrictions), these nodes can be removed from a deployment by:
+- Commenting lines 101-127 of `./Vagrantfile`, and;
+- Modifying the HAProxy configuration in `./inventory/host_vars/mirrorregistry/dnsmasq.yml` so that ports 80 and 443 are pointed at all master nodes.
+- Creating an Ansible variables file for `localhost` and setting `install_control_schedulable: true` (or changing this in `./roles/openshift_config/defaults/main.yml`).
+
 ## Mirror Registry VM Creation
 
 The below will create the Mirror Registry VM, which is required for Ansible preparation.
@@ -32,7 +41,7 @@ vagrant up
 
 The OpenShift nodes will not be started here (they're configured in the Vagrantfile with `autostart: false`), because they require outputs from the mirror process before being able to boot.
 
-## Ansible Configuration
+## Ansible Setup and Run
 
 ```bash
 python3 -m venv venv # Create virtual environment if it doesn't already exist
@@ -111,4 +120,15 @@ After initial provisioning, the cluster can be [gracefully shutdown](https://doc
 The cluster can then be [gracefully restarted](https://docs.openshift.com/container-platform/4.14/backup_and_restore/graceful-cluster-restart.html) by completing the following:
 
 1. Powering back on the mirrorregistry and OpenShift node VMs with `vagrant up mirrorregistry master01 master02 master03 worker01 worker02`
-v
+
+# Install from Scratch
+
+To install a new cluster from scratch the following local directories need to be cleared:
+- `./openshift/images/`
+- `./openshift/install/`
+
+If the Mirror Registry VM has been kept (and `./openshift/mirror/imageContentSourcePolicy.yaml` still exists), then Ansible can redeploy a cluster by running the following:
+
+```bash
+ansible-playbook playbooks/openshift-lab-disconnected.yml -D --start-at-task="Create local directories for Openshift installation"
+```
