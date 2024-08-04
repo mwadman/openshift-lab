@@ -8,7 +8,7 @@ controlPlane:
   name: master
   replicas: 3
 metadata:
-  name: openshift
+  name: lab
 networking:
   clusterNetwork:
   - cidr: 10.128.0.0/14
@@ -19,10 +19,5 @@ networking:
 platform:
   none: {}
 fips: false
-pullSecret: '{"auths":{"mirrorregistry.openshift.vagrant:8443": {"auth": "aW5pdDpNaXJyb3JSZWdpc3RyeQ=="}}}'
-sshKey: "{{ install_ssh_key }}"
-additionalTrustBundle: |
-{{ lookup('ansible.builtin.file', '../openshift/mirror/rootCA.pem') | indent(2, true) }}
-{# The below takes the multi-document (multiple ---) imageContentSourcePolicy.yaml, converts it to JSON, gets all values of spec.repositoryDigestMirrors then converts it back to yaml for this file #}
-imageContentSources:
-{{ lookup('ansible.builtin.file', '../openshift/mirror/imageContentSourcePolicy.yaml') | from_yaml_all | community.general.json_query('[*].spec.repositoryDigestMirrors[]') | to_yaml }}
+pullSecret: '{{ lookup('ansible.builtin.file', '../openshift/pull-secret.json') }}'
+sshKey: "{{ openshift_config_ssh_key }}"

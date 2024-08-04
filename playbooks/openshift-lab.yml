@@ -1,0 +1,18 @@
+---
+- name: Set Up Load Balancer
+  hosts: lb
+  become: true
+  roles:
+    - uoi-io.haproxy
+  tasks:
+    - name: Disable Firewalld
+      ansible.builtin.service:
+        name: "firewalld"
+        state: "stopped"
+        enabled: false
+
+- name: Create OpenShift configurations
+  hosts: localhost
+  become: false
+  roles:
+    - openshift_config

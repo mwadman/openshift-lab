@@ -1,5 +1,5 @@
 ---
-install_client_version: "4.14.11"
-install_ssh_key: "{{ lookup('ansible.builtin.file', '~/.ssh/id_rsa.pub') }}"
+openshift_config_client_version: "4.14.33"
+openshift_config_ssh_key: "{{ lookup('ansible.builtin.file', '~/.ssh/id_rsa.pub') }}"
 
-install_control_schedulable: true
+openshift_config_control_schedulable: false

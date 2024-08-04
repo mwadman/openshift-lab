@@ -1,0 +1,50 @@
+<network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
+  <name>vagrant-libvirt</name>
+  <forward mode='nat'/>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <mac address='52:54:00:15:db:ae'/>
+  <domain name='lab.vagrant' localOnly='yes'/>
+  <dns>
+    <host ip='192.168.121.10'>
+      <hostname>lb.lab.vagrant</hostname>
+      <hostname>api.lab.vagrant</hostname>
+      <hostname>api-int.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.21'>
+      <hostname>bootstrap.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.31'>
+      <hostname>master01.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.32'>
+      <hostname>master02.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.33'>
+      <hostname>master03.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.41'>
+      <hostname>worker01.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.42'>
+      <hostname>worker02.lab.vagrant</hostname>
+    </host>
+    <host ip='192.168.121.43'>
+      <hostname>worker03.lab.vagrant</hostname>
+    </host>
+  </dns>
+  <ip address='192.168.121.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.121.1' end='192.168.121.254'/>
+      <host mac='52:54:00:00:00:10' ip='192.168.121.10'/>
+      <host mac='52:54:00:00:00:21' ip='192.168.121.21'/>
+      <host mac='52:54:00:00:00:31' ip='192.168.121.31'/>
+      <host mac='52:54:00:00:00:32' ip='192.168.121.32'/>
+      <host mac='52:54:00:00:00:33' ip='192.168.121.33'/>
+      <host mac='52:54:00:00:00:41' ip='192.168.121.41'/>
+      <host mac='52:54:00:00:00:42' ip='192.168.121.42'/>
+    </dhcp>
+  </ip>
+  <dnsmasq:options>
+    <dnsmasq:option value='address=/apps.lab.vagrant/192.168.121.10'/>
+  </dnsmasq:options>
+</network>
