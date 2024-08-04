@@ -8,10 +8,6 @@ collections:
     version: 8.1.0
   - name: ansible.posix
     version: 1.5.4
-  - name: mwadman.networkmanager_roles
-    version: 1.0.1
-  - name: mwadman.dnsmasq_roles
-    version: 1.0.0
 
 roles:
   - name: uoi-io.haproxy

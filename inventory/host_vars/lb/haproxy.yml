@@ -1,0 +1,58 @@
+---
+# System configuration
+haproxy_firewalld: false # firewalld not installed in image
+
+# Configuration
+## Global Configuration
+haproxy_global_logs:
+  - "127.0.0.1 local2"
+haproxy_global_tunes: []
+## Default Configuration
+haproxy_default_mode: http
+haproxy_default_options:
+  - dontlognull
+  - http-server-close
+  - redispatch
+## Stats Configuration
+haproxy_stats_auth: false
+## Resolvers Configuration
+haproxy_resolvers:
+  - libvirtdnsmasq:
+      nameservers:
+        - 'host 192.168.121.1:53'
+## Listen Configuration
+haproxy_listen:
+  - api-server-6443:
+      binds:
+        - "*:6443"
+      mode: "tcp"
+      servers:
+        - "bootstrap bootstrap.lab.vagrant:6443 check inter 1s backup resolvers libvirtdnsmasq"
+        - "master01 master01.lab.vagrant:6443 check inter 1s resolvers libvirtdnsmasq"
+        - "master02 master02.lab.vagrant:6443 check inter 1s resolvers libvirtdnsmasq"
+        - "master03 master03.lab.vagrant:6443 check inter 1s resolvers libvirtdnsmasq"
+  - machine-config-server-22623:
+      binds:
+        - "*:22623"
+      mode: "tcp"
+      servers:
+        - "bootstrap bootstrap.lab.vagrant:22623 check inter 1s backup resolvers libvirtdnsmasq"
+        - "master01 master01.lab.vagrant:22623 check inter 1s resolvers libvirtdnsmasq"
+        - "master02 master02.lab.vagrant:22623 check inter 1s resolvers libvirtdnsmasq"
+        - "master03 master03.lab.vagrant:22623 check inter 1s resolvers libvirtdnsmasq"
+  - ingress-router-443:
+      binds:
+        - "*:443"
+      mode: "tcp"
+      balance: "source"
+      servers:
+        - "worker01 worker01.lab.vagrant:443 check inter 1s resolvers libvirtdnsmasq"
+        - "worker02 worker02.lab.vagrant:443 check inter 1s resolvers libvirtdnsmasq"
+  - ingress-router-80:
+      binds:
+        - "*:80"
+      mode: "tcp"
+      balance: "source"
+      servers:
+        - "worker01 worker01.lab.vagrant:80 check inter 1s resolvers libvirtdnsmasq"
+        - "worker02 worker02.lab.vagrant:80 check inter 1s resolvers libvirtdnsmasq"
