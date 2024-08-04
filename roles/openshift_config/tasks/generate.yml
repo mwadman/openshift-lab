@@ -38,7 +38,7 @@
   ansible.builtin.lineinfile:
     path: "../openshift/install/manifests/cluster-scheduler-02-config.yml"
     regexp: ".*mastersSchedulable.*"
-    line: "  mastersSchedulable: {{ install_control_schedulable | bool | lower }}"
+    line: "  mastersSchedulable: {{ openshift_config_control_schedulable | bool | lower }}"
   when: find_install_log.files | length == 0
 
 - name: Generate Ignition configuration files

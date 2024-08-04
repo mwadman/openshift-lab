@@ -20,4 +20,4 @@ platform:
   none: {}
 fips: false
 pullSecret: '{{ lookup('ansible.builtin.file', '../openshift/pull-secret.json') }}'
-sshKey: "{{ install_ssh_key }}"
+sshKey: "{{ openshift_config_ssh_key }}"

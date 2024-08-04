@@ -30,7 +30,7 @@ By default, this repository will deploy worker nodes alongside the master nodes.
 If preferred (or needed due to resource restrictions), these nodes can be removed from a deployment by:
 - Commenting lines 101-127 of `./Vagrantfile`, and;
 - Modifying the HAProxy configuration in `./inventory/host_vars/mirrorregistry/dnsmasq.yml` so that ports 80 and 443 are pointed at all master nodes.
-- Creating an Ansible variables file for `localhost` and setting `install_control_schedulable: true` (or changing this in `./roles/openshift_config/defaults/main.yml`).
+- Creating an Ansible variables file for `localhost` and setting `openshift_config_control_schedulable: true` (or changing this in `./roles/openshift_config/defaults/main.yml`).
 
 ## Load Balancer VM Creation
 
