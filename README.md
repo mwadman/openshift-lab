@@ -86,14 +86,37 @@ After bringing up the OpenShift nodes, you can monitor the install progress usin
    You might need to complete this twice. It's worth double checking whether there are additional pending certificates after initial approvals.
 6. Monitor the status of the cluster operators with `./openshift/tools/oc get clusteroperators`.
    All of the operators should be Available, not progressing and not degraded.
-7. Monitor the status of the cluster installation with `./openshift/tools/openshift-install --dir ./openshift/install/ wait-for install-complete` 
-8. Confirm the status of all pods with `./openshift/tools/oc get pods --all-namespaces`
+   You can run `./openshift/tools/oc get clusteroperator | grep -v "True        False         False"` to only show unhealthy operators.
+7. Monitor the status of the cluster installation with `./openshift/tools/openshift-install --dir ./openshift/install/ wait-for install-complete`
+8. Confirm the status of all pods with `./openshift/tools/oc get pods --all-namespaces`.
+   You can run `./openshift/tools/oc get pods --all-namespaces --field-selector="status.phase!=Running,status.phase!=Succeeded"` to only show unhealthy pods.
 
-If you need to, you can SSH to the nodes using the SSH key at the l./openshift/tools/ocation specified with `install_ssh_key` (defaults to `~/.ssh/id_rsa.pub`).  
-For example:
+### Troubleshooting Installation
+
+In the case that installation is failing, you can SSH to the bootstrap node to assist in determining the cause of the failure, presuming you've reached the stage where the bootstrap VM has successfully started:
 
 ```bash
+# SSH to Bootstrap VM, as per above section
+vagrant ssh bootstrap # Bootstrap node
 ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@bootstrap.lab.vagrant # Bootstrap node
+# Become the root user and set KUBECONFIG variable
+sudo su
+export KUBECONFIG="./openshift/install/auth/kubeconfig"
+# Run troubleshooting commands as required
+journalctl -b -f -u release-image.service -u bootkube.service # Shows progress of bootstrap process
+oc get clusteroperator | grep -v "True        False         False" # Displays unhealthy cluster operators
+oc get pods --all-namespaces --field-selector="status.phase!=Running,status.phase!=Succeeded" # Displays unhealthy pods
+# Other commands to determine state of environment
+## Appending `--request-timeout=5s` can be useful during a failed install as the API may not be responsive
+## Appending `-o json` provides more detail if needed
+oc get nodes
+oc get apiservices
+oc get clusterversion
+oc get machineconfigpools
+```
+
+Note that the SSH command above can be used to connect to any VM that's been deployed (e.g. master01).
+
 ## Working with the environment
 
 After a cluster has been installed, you can interact with it via either the web console or the Kubernetes API.  
