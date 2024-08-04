@@ -1,11 +1,12 @@
 # Overview
 
-Packer and Vagrant files to create a pseudo-disconnected OpenShift lab using libvirt.
+Packer and Vagrant files to create an OpenShift lab using libvirt.  
+See the `disconnected` branches for instructions on how to deploy a lab in a pseudo-disconnected state.
 
 # Prerequisites
 
-- A host machine with at least 20 vCPUs, 80GB RAM and 800GB Disk Space available.  
-  You can reduce this to 16 vCPUs, 64GB RAM and 600GB Disk Space available by removing the worker nodes, which is documented below.
+- A host machine with at least 20 vCPUs, 80GB RAM and 720GB Disk Space available.  
+  You can reduce this to 16 vCPUs, 64GB RAM and 520GB Disk Space available by removing the worker nodes, which is documented below.
 - [libvirt](https://wiki.archlinux.org/title/libvirt)
 - [vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
 - [Docker](https://docs.docker.com/engine/install/)
@@ -31,15 +32,15 @@ If preferred (or needed due to resource restrictions), these nodes can be remove
 - Modifying the HAProxy configuration in `./inventory/host_vars/mirrorregistry/dnsmasq.yml` so that ports 80 and 443 are pointed at all master nodes.
 - Creating an Ansible variables file for `localhost` and setting `install_control_schedulable: true` (or changing this in `./roles/openshift_config/defaults/main.yml`).
 
-## Mirror Registry VM Creation
+### Load Balancer VM Creation
 
-The below will create the Mirror Registry VM, which is required for Ansible preparation.
+The below will create the Load Balancer VM (which is required for Ansible preparation) along with its' network, reconfigures the VM network (including required DNS entries), thens restarts the VM so it reboots with the right IP address.
 
 ```bash
-vagrant up
+vagrant up && vagrant reload lb --force
 ```
 
-The OpenShift nodes will not be started here (they're configured in the Vagrantfile with `autostart: false`), because they require outputs from the mirror process before being able to boot.
+The OpenShift nodes will not be started here (they're configured in the Vagrantfile with `autostart: false`), because they require outputs from running Ansible before being able to boot.
 
 ## Ansible Setup and Run
 
@@ -48,7 +49,7 @@ python3 -m venv venv # Create virtual environment if it doesn't already exist
 source venv/bin/activate
 pip3 install -r requirements.txt
 ansible-galaxy install -r requirements.yml
-ansible-playbook playbooks/openshift-lab-disconnected.yml -D
+ansible-playbook playbooks/openshift-lab.yml -D
 ```
 
 ## OpenShift VM Creation
@@ -62,17 +63,10 @@ vagrant up bootstrap master01 master02 master03 worker01 worker02
 ## Configure DNS
 
 If you want to be able to connect to the environment using DNS, you will need to configure local DNS.  
-The quick and easy way to do this is via /etc/hosts, by appending lines similar to the below:
+This configuration will depend on your local machine's DNS implementation, but when using NetworkManager you can enable dnsmasq and create a configuration file in `/etc/NetworkManager/dnsmasq.d/` similar to the below (replacing `192.168.121.1` if your vagrant-libvirt network uses a different host IP address/subnet):
 
 ```
-# OpenShift Vagrant Lab
-10.0.0.2 api.openshift.vagrant api-int.openshift.vagrant apps.openshift.vagrant mirrorregistry.openshift.vagrant
-10.0.0.11 bootstrap.openshift.vagrant
-10.0.0.21 master01.openshift.vagrant
-10.0.0.22 master02.openshift.vagrant
-10.0.0.23 master03.openshift.vagrant
-10.0.0.31 worker01.openshift.vagrant
-10.0.0.32 worker02.openshift.vagrant
+server=/lab.vagrant/192.168.121.1
 ```
 
 ## Monitor Environment
@@ -80,7 +74,7 @@ The quick and easy way to do this is via /etc/hosts, by appending lines similar 
 After bringing up the OpenShift nodes, you can monitor the install progress using the following:
 
 1. Set the path to the generated kubeconfig file as the environment variable `KUBECONFIG` - `export KUBECONFIG="./openshift/install/auth/kubeconfig"`
-2. Browse to [the HAProxy stats page](http://10.0.0.2:9001/) to view whether nodes are reachable from HAProxy.
+2. Browse to [the HAProxy stats page](http://lb.lab.vagrant:9001/) to view whether nodes are reachable from HAProxy.
 3. Monitor the bootstrap process with `./openshift/tools/openshift-install --dir ./openshift/install/ wait-for bootstrap-complete`  
    Remember to clean up the bootstrap node (`vagrant destroy -f bootstrap`) once it is no longer needed.
 4. Monitor node status with `./openshift/tools/oc get nodes`
@@ -90,16 +84,15 @@ After bringing up the OpenShift nodes, you can monitor the install progress usin
 6. Monitor the status of the cluster operators with `./openshift/tools/oc get clusteroperators`.
    All of the operators should be Available, not progressing and not degraded.
 7. Monitor the status of the cluster installation with `./openshift/tools/openshift-install --dir ./openshift/install/ wait-for install-complete` 
-8. Disable the default OperatorHub sources with `./openshift/tools/oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'`
-9. Confirm the status of all pods with `./openshift/tools/oc get pods --all-namespaces`
+8. Confirm the status of all pods with `./openshift/tools/oc get pods --all-namespaces`
 
 If you need to, you can SSH to the nodes using the SSH key at the l./openshift/tools/ocation specified with `install_ssh_key` (defaults to `~/.ssh/id_rsa.pub`).  
 For example:
 
 ```bash
-ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@bootstrap.openshift.vagrant # Bootstrap node
-ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@master01.openshift.vagrant # Master node
-ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@worker01.openshift.vagrant # Worker node
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@bootstrap.lab.vagrant # Bootstrap node
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@master01.lab.vagrant # Master node
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking no" core@worker01.lab.vagrant # Worker node
 ```
 
 # Working with the environment
@@ -119,16 +112,10 @@ After initial provisioning, the cluster can be [gracefully shutdown](https://doc
 
 The cluster can then be [gracefully restarted](https://docs.openshift.com/container-platform/4.14/backup_and_restore/graceful-cluster-restart.html) by completing the following:
 
-1. Powering back on the mirrorregistry and OpenShift node VMs with `vagrant up mirrorregistry master01 master02 master03 worker01 worker02`
+1. Powering back on the OpenShift node VMs with `vagrant up master01 master02 master03 worker01 worker02`
 
 # Install from Scratch
 
 To install a new cluster from scratch the following local directories need to be cleared:
 - `./openshift/images/`
 - `./openshift/install/`
-
-If the Mirror Registry VM has been kept (and `./openshift/mirror/imageContentSourcePolicy.yaml` still exists), then Ansible can redeploy a cluster by running the following:
-
-```bash
-ansible-playbook playbooks/openshift-lab-disconnected.yml -D --start-at-task="Create local directories for Openshift installation"
-```
